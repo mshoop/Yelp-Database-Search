@@ -1,0 +1,13 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" x:Class="Database_Project.CategoriesChart"
+        Title="CategoriesChart" Height="600" Width="600">
+    <Grid>
+
+        <chartingToolkit:Chart HorizontalAlignment="Left" Title="Number of Business Categories in Search" Name ="categoryChart" Width="600" Height="600" VerticalAlignment="Top">
+             <chartingToolkit:ColumnSeries Title ="Number of Categories" DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}"/>
+        </chartingToolkit:Chart>
+
+    </Grid>
+</Window>
