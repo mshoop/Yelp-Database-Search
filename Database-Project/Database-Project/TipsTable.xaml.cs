@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,22 +14,22 @@ using System.Windows.Shapes;
 
 namespace Database_Project
 {
-	/// <summary>
-	/// Interaction logic for TipsTable.xaml
-	/// </summary>
-	public partial class TipsTable : Window
+    /// <summary>
+    /// Interaction logic for TipsTable.xaml
+    /// </summary>
+    public partial class TipsTable : Window
     {
-		public TipsTable()
+        public TipsTable()
         {
-			InitializeComponent();
-		}
+            InitializeComponent();
+        }
 
-		public class Data
+        public class Data
         {
-			public string user { get; set;}
-			public string date  {get; set;}
-			public string numLikes  {get; set;}
-			public string text { get; set; }
-		}
-	}
+            public string user { get; set;}
+            public string date  {get; set;}
+            public string numLikes  {get; set;}
+            public string text { get; set; }
+        }
+    }
 }
