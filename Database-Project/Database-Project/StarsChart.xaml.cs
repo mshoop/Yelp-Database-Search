@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,14 +14,14 @@ using System.Windows.Shapes;
 
 namespace Database_Project
 {
-	/// <summary>
-	/// Interaction logic for StarsChart.xaml
-	/// </summary>
-	public partial class StarsChart : Window
+    /// <summary>
+    /// Interaction logic for StarsChart.xaml
+    /// </summary>
+    public partial class StarsChart : Window
     {
-		public StarsChart()
+        public StarsChart()
         {
-			InitializeComponent();
-		}
-	}
+            InitializeComponent();
+        }
+    }
 }
