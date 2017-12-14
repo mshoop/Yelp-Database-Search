@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,35 +17,35 @@ using System.Text.RegularExpressions;
 
 namespace Database_Project
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
     {
-		public MainWindow()
+        public MainWindow()
         {
-			InitializeComponent();
-			populateStateMenu();// add states to drop menu
-			populateCityMenu();
-			populateBusinessCategoryMenu();
-			populateDays();
-			populateZip();
-		}
+            InitializeComponent();
+            populateStateMenu();// add states to drop menu
+            populateCityMenu();
+            populateBusinessCategoryMenu();
+            populateDays();
+            populateZip();
+        }
 
-		public class Business
+        public class Business
         {
-			public string name { get; set; }
-			public string address { get; set; }
-			public string numTips { get; set; }
-			public string totalCheckins { get; set; }
-			public string id { get; set; }
+            public string name { get; set; }
+            public string address { get; set; }
+            public string numTips { get; set; }
+            public string totalCheckins { get; set; }
+            public string id { get; set; }
             public string state { get; set; }
             public string city { get; set; }
         }
         public class Friends
         {
             public string user_id { get; set; }
-			public string friend_id { get; set; }
+            public string friend_id { get; set; }
             public string business_id { get; set; }
             public string name { get; set; }
             public string average_stars { get; set; }
@@ -60,10 +60,10 @@ namespace Database_Project
         }
 
         /* To establish connection with PostgreSQL Database */
-		private string buildConnString()
+        private string buildConnString()
         {
-			return "Host=127.0.0.1; Port=5432; Username=postgres; Password=12345; Database=milestone3";
-		}
+            return "Host=127.0.0.1; Port=5432; Username=postgres; Password=12345; Database=milestone3";
+        }
 
         #region First tab: User Information 
         /// <summary>
@@ -142,15 +142,15 @@ namespace Database_Project
                     }
                 }
             }
-			return;
-		}
+            return;
+        }
 
-		private void removeFriendButton_Click(object sender, RoutedEventArgs e)
+        private void removeFriendButton_Click(object sender, RoutedEventArgs e)
         {
-			string[] tables = { "friends", "votes", "tip", "users" };
-			Friends f = (Friends)friendsDataGrid.SelectedItem;
+            string[] tables = { "friends", "votes", "tip", "users" };
+            Friends f = (Friends)friendsDataGrid.SelectedItem;
 
-			foreach (string s in tables)
+            foreach (string s in tables)
             {
                 using (var connection = new NpgsqlConnection(buildConnString()))
                 {
@@ -167,14 +167,14 @@ namespace Database_Project
                         }
                     }
                 }
-			}
-		}
+            }
+        }
 
-		private void rateFrriendButton_Click(object sender, RoutedEventArgs e)
+        private void rateFrriendButton_Click(object sender, RoutedEventArgs e)
         {
-			Friends f = (Friends)friendsDataGrid.SelectedItem;
-			string txt = rateFriendScoreTextBox.Text;
-			int rating = Int32.Parse(txt);
+            Friends f = (Friends)friendsDataGrid.SelectedItem;
+            string txt = rateFriendScoreTextBox.Text;
+            int rating = Int32.Parse(txt);
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -197,7 +197,7 @@ namespace Database_Project
         #region Second Tab: Business Search
         private void searchBusinessButton_Click(object sender, RoutedEventArgs e)
         {
-			searchResultsDataGrid.Items.Clear();
+            searchResultsDataGrid.Items.Clear();
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -216,71 +216,71 @@ namespace Database_Project
                     }
                 }
             }
-			Business b = (Business)searchResultsDataGrid.Items[0];
-			enterTipTextBox.Text = b.id;
-		}
+            Business b = (Business)searchResultsDataGrid.Items[0];
+            enterTipTextBox.Text = b.id;
+        }
 
-		private string buildWhereSearchString()
+        private string buildWhereSearchString()
         {
-			Boolean needed = false;
-			StringBuilder sb = new StringBuilder();
-			sb.Append("WHERE ");
+            Boolean needed = false;
+            StringBuilder sb = new StringBuilder();
+            sb.Append("WHERE ");
 
-			if (statesComboBox.SelectedIndex > -1)
+            if (statesComboBox.SelectedIndex > -1)
             {
-				needed = true;
-				sb.Append("state='" + statesComboBox.SelectedItem + "' ");
-			}
+                needed = true;
+                sb.Append("state='" + statesComboBox.SelectedItem + "' ");
+            }
 
-			if (citiesListBox.SelectedIndex > -1)
+            if (citiesListBox.SelectedIndex > -1)
             {
-				if (needed)
+                if (needed)
                 {
                     sb.Append("AND ");
                 }
-				needed = true;
-				sb.Append("city='" + citiesListBox.SelectedItem + "' ");
-			}
+                needed = true;
+                sb.Append("city='" + citiesListBox.SelectedItem + "' ");
+            }
 
-			if (selectedCategoriesListBox.Items.Count > 0)
+            if (selectedCategoriesListBox.Items.Count > 0)
             {
-				//category = true;
-				if (needed)
+                //category = true;
+                if (needed)
                 {
                     sb.Append("AND ");
                 }
-				needed = true;
-				sb.Append("business_id IN (SELECT business_id FROM categories WHERE ");
+                needed = true;
+                sb.Append("business_id IN (SELECT business_id FROM categories WHERE ");
 
-				for (int i = 0; i < selectedCategoriesListBox.Items.Count; i++)
+                for (int i = 0; i < selectedCategoriesListBox.Items.Count; i++)
                 {
-					if (i != 0) { sb.Append("AND "); }
-					sb.Append("category = '" + selectedCategoriesListBox.Items[i] + "' ");
-				}
+                    if (i != 0) { sb.Append("AND "); }
+                    sb.Append("category = '" + selectedCategoriesListBox.Items[i] + "' ");
+                }
 
-				sb.Append(")");
-			}
+                sb.Append(")");
+            }
 
-			if (zipCodeListBox.SelectedIndex > 0)
+            if (zipCodeListBox.SelectedIndex > 0)
             {
-				if (needed)
+                if (needed)
                 {
                     sb.Append("AND ");
                 }
-				needed = true;
-				sb.Append("RIGHT(full_address,5)='" + zipCodeListBox.SelectedItem + "' ");
-			}
+                needed = true;
+                sb.Append("RIGHT(full_address,5)='" + zipCodeListBox.SelectedItem + "' ");
+            }
 
-			if (fromComboBox.SelectedIndex > 0 && toComboBox.SelectedIndex > 0 && dayOfTheWeekComboBox.SelectedIndex > 0)
+            if (fromComboBox.SelectedIndex > 0 && toComboBox.SelectedIndex > 0 && dayOfTheWeekComboBox.SelectedIndex > 0)
             {
-				if (needed)
+                if (needed)
                 {
                     sb.Append("AND ");
                 }
-				needed = true;
-				sb.Append("business_id IN (SELECT business_id FROM hours WHERE open <= CAST('" + fromComboBox.SelectedItem + "' AS TIME) AND close >= CAST('" + toComboBox.SelectedItem + "' AS TIME) AND day='" + dayOfTheWeekComboBox.SelectedItem + "')");
-				sb.Append("AND business_id IN (SELECT business_id FROM hours WHERE open=close AND day='" + dayOfTheWeekComboBox.SelectedItem + "')");
-			}
+                needed = true;
+                sb.Append("business_id IN (SELECT business_id FROM hours WHERE open <= CAST('" + fromComboBox.SelectedItem + "' AS TIME) AND close >= CAST('" + toComboBox.SelectedItem + "' AS TIME) AND day='" + dayOfTheWeekComboBox.SelectedItem + "')");
+                sb.Append("AND business_id IN (SELECT business_id FROM hours WHERE open=close AND day='" + dayOfTheWeekComboBox.SelectedItem + "')");
+            }
 
             if (needed)
             {
@@ -290,10 +290,10 @@ namespace Database_Project
             {
                 return "";
             }
-		}
-		private void populateStateMenu()
+        }
+        private void populateStateMenu()
         {
-			StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -310,12 +310,12 @@ namespace Database_Project
                     }
                 }
             }
-			return;
-		}
+            return;
+        }
 
-		private void populateCityMenu()
+        private void populateCityMenu()
         {
-			StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -332,11 +332,11 @@ namespace Database_Project
                     }
                 }
             }
-			return;
-		}
-		private void populateBusinessCategoryMenu()
+            return;
+        }
+        private void populateBusinessCategoryMenu()
         {
-			StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -353,37 +353,37 @@ namespace Database_Project
                     }
                 }
             }
-			return;
-		}
+            return;
+        }
 
-		private void populateDays()
+        private void populateDays()
         {
-			string[] days = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+            string[] days = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
-			foreach (string s in days)
+            foreach (string s in days)
             {
-				dayOfTheWeekComboBox.Items.Add(s);
-			}
+                dayOfTheWeekComboBox.Items.Add(s);
+            }
 
-			for (int i = 0; i < 24; i++)
+            for (int i = 0; i < 24; i++)
             {
-				var s = "";
-				if (i < 10)
+                var s = "";
+                if (i < 10)
                 {
-					s = "0" + i.ToString() + ":00:00";
-				}
+                    s = "0" + i.ToString() + ":00:00";
+                }
                 else
                 {
-					s = i.ToString() + ":00:00";
-				}
-				fromComboBox.Items.Add(s);
-				toComboBox.Items.Add(s);
-			}
-		}
+                    s = i.ToString() + ":00:00";
+                }
+                fromComboBox.Items.Add(s);
+                toComboBox.Items.Add(s);
+            }
+        }
 
-		private void populateZip()
+        private void populateZip()
         {
-			StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -400,19 +400,19 @@ namespace Database_Project
                     }
                 }
             }
-			return;
-		}
+            return;
+        }
 
-		private void statesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void statesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-			updateCities();
-			updateZipCode();
-			updateCategories();
-		}
+            updateCities();
+            updateZipCode();
+            updateCategories();
+        }
 
-		public void updateCities()
+        public void updateCities()
         {
-			citiesListBox.Items.Clear(); // clear previous results
+            citiesListBox.Items.Clear(); // clear previous results
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -430,28 +430,28 @@ namespace Database_Project
                 }
                 connection.Close();
             }
-		}
+        }
 
-		private string buildCitiesWhere()
+        private string buildCitiesWhere()
         {
-			Boolean needed = false;
-			StringBuilder sb = new StringBuilder();
-			sb.Append("WHERE ");
+            Boolean needed = false;
+            StringBuilder sb = new StringBuilder();
+            sb.Append("WHERE ");
 
-			if (statesComboBox.SelectedIndex > -1)
+            if (statesComboBox.SelectedIndex > -1)
             {
-				needed = true;
-				sb.Append("business_id IN (SELECT business_id FROM business WHERE state ='" + statesComboBox.SelectedItem + "') ");
-			}
-			if (zipCodeListBox.SelectedIndex > -1)
+                needed = true;
+                sb.Append("business_id IN (SELECT business_id FROM business WHERE state ='" + statesComboBox.SelectedItem + "') ");
+            }
+            if (zipCodeListBox.SelectedIndex > -1)
             {
-				if (needed)
+                if (needed)
                 {
                     sb.Append("AND ");
                 }
-				needed = true;
-				sb.Append("business_id IN (SELECT business_id FROM business WHERE RIGHT(full_address,5)='" + zipCodeListBox.SelectedItem + "') ");
-			}
+                needed = true;
+                sb.Append("business_id IN (SELECT business_id FROM business WHERE RIGHT(full_address,5)='" + zipCodeListBox.SelectedItem + "') ");
+            }
             if (needed)
             {
                 return sb.ToString();
@@ -460,11 +460,11 @@ namespace Database_Project
             {
                 return "";
             }
-		}
+        }
 
-		private void updateZipCode()
+        private void updateZipCode()
         {
-			zipCodeListBox.Items.Clear();
+            zipCodeListBox.Items.Clear();
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -481,28 +481,28 @@ namespace Database_Project
                     }
                 }
             }
-			return;
-		}
+            return;
+        }
 
-		private string buildZipWhere()
+        private string buildZipWhere()
         {
-			Boolean needed = false;
-			StringBuilder sb = new StringBuilder();
-			sb.Append("WHERE ");
-			if (statesComboBox.SelectedIndex > -1)
+            Boolean needed = false;
+            StringBuilder sb = new StringBuilder();
+            sb.Append("WHERE ");
+            if (statesComboBox.SelectedIndex > -1)
             {
-				needed = true;
-				sb.Append("business_id IN (SELECT business_id FROM business WHERE state ='" + statesComboBox.SelectedItem + "') ");
-			}
-			if (citiesListBox.SelectedIndex > -1)
+                needed = true;
+                sb.Append("business_id IN (SELECT business_id FROM business WHERE state ='" + statesComboBox.SelectedItem + "') ");
+            }
+            if (citiesListBox.SelectedIndex > -1)
             {
-				if (needed)
+                if (needed)
                 {
                     sb.Append("AND ");
                 }
-				needed = true;
-				sb.Append("business_id IN (SELECT business_id FROM business WHERE city ='" + citiesListBox.SelectedItem + "') ");
-			}
+                needed = true;
+                sb.Append("business_id IN (SELECT business_id FROM business WHERE city ='" + citiesListBox.SelectedItem + "') ");
+            }
 
             if (needed)
             {
@@ -512,12 +512,12 @@ namespace Database_Project
             {
                 return "";
             }
-		}
+        }
 
-		private void updateCategories()
+        private void updateCategories()
         {
-			businessCategoryListBox.Items.Clear();
-			StringBuilder sb = new StringBuilder();
+            businessCategoryListBox.Items.Clear();
+            StringBuilder sb = new StringBuilder();
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -534,38 +534,38 @@ namespace Database_Project
                     }
                 }
             }
-			selectedBusinessesTextBox.Text = (businessCategoryListBox.Items.Count.ToString());
+            selectedBusinessesTextBox.Text = (businessCategoryListBox.Items.Count.ToString());
 
-		}
+        }
 
-		private string buildCategoriesWhereString()
+        private string buildCategoriesWhereString()
         {
-			Boolean needed = false;
-			StringBuilder sb = new StringBuilder();
-			sb.Append("WHERE ");
-			if (statesComboBox.SelectedIndex > -1)
+            Boolean needed = false;
+            StringBuilder sb = new StringBuilder();
+            sb.Append("WHERE ");
+            if (statesComboBox.SelectedIndex > -1)
             {
-				needed = true;
-				sb.Append("business_id IN (SELECT business_id FROM business WHERE state ='" + statesComboBox.SelectedItem + "') ");
-			}
-			if (citiesListBox.SelectedIndex > -1)
-            {
-				if (needed)
-                {
-                    sb.Append("AND ");
-                }
-				needed = true;
-				sb.Append("business_id IN (SELECT business_id FROM business WHERE city ='" + citiesListBox.SelectedItem + "') ");
-			}
-			if (zipCodeListBox.SelectedIndex > -1)
+                needed = true;
+                sb.Append("business_id IN (SELECT business_id FROM business WHERE state ='" + statesComboBox.SelectedItem + "') ");
+            }
+            if (citiesListBox.SelectedIndex > -1)
             {
                 if (needed)
                 {
                     sb.Append("AND ");
                 }
                 needed = true;
-				sb.Append("business_id IN (SELECT business_id FROM business WHERE RIGHT(full_address,5)='" + zipCodeListBox.SelectedItem + "') ");
-			}
+                sb.Append("business_id IN (SELECT business_id FROM business WHERE city ='" + citiesListBox.SelectedItem + "') ");
+            }
+            if (zipCodeListBox.SelectedIndex > -1)
+            {
+                if (needed)
+                {
+                    sb.Append("AND ");
+                }
+                needed = true;
+                sb.Append("business_id IN (SELECT business_id FROM business WHERE RIGHT(full_address,5)='" + zipCodeListBox.SelectedItem + "') ");
+            }
             if (needed)
             {
                 return sb.ToString();
@@ -574,53 +574,53 @@ namespace Database_Project
             {
                 return "";
             }
-		}
-		private void removeButton_Click(object sender, RoutedEventArgs e)
+        }
+        private void removeButton_Click(object sender, RoutedEventArgs e)
         {
-			selectedCategoriesListBox.Items.Remove(selectedCategoriesListBox.SelectedItem);
-		}
-		private void addButton_Click(object sender, RoutedEventArgs e)
+            selectedCategoriesListBox.Items.Remove(selectedCategoriesListBox.SelectedItem);
+        }
+        private void addButton_Click(object sender, RoutedEventArgs e)
         {
-			foreach (var v in selectedCategoriesListBox.Items)
+            foreach (var v in selectedCategoriesListBox.Items)
             {
-				if (businessCategoryListBox.SelectedItem == v)
+                if (businessCategoryListBox.SelectedItem == v)
                 {
-					return;
-				}
-			}
-			selectedCategoriesListBox.Items.Add(businessCategoryListBox.SelectedItem);
-		}
+                    return;
+                }
+            }
+            selectedCategoriesListBox.Items.Add(businessCategoryListBox.SelectedItem);
+        }
 
-		private void citiesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void citiesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-			updateCategories();
-			if (zipCodeListBox.SelectedIndex < 0) //only update if none selected
+            updateCategories();
+            if (zipCodeListBox.SelectedIndex < 0) //only update if none selected
             { 
-				updateZipCode();
-			}
-		}
+                updateZipCode();
+            }
+        }
 
-		private void zipCodeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void zipCodeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-			updateCategories();
-			if (citiesListBox.SelectedIndex < 0)
+            updateCategories();
+            if (citiesListBox.SelectedIndex < 0)
             {
-				updateCities();
-			}
-		}
+                updateCities();
+            }
+        }
 
-		private void showCheckinsButton_Click(object sender, RoutedEventArgs e)
+        private void showCheckinsButton_Click(object sender, RoutedEventArgs e)
         {
-			string[] days = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+            string[] days = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
-			if (searchResultsDataGrid.SelectedIndex < 0)
+            if (searchResultsDataGrid.SelectedIndex < 0)
             {
                 return;
             }
 
-			Business b = (Business)searchResultsDataGrid.SelectedItem;
+            Business b = (Business)searchResultsDataGrid.SelectedItem;
             var bId = b.id;
-			List<int> dayData = new List<int>(); List<int> count = new List<int>();
+            List<int> dayData = new List<int>(); List<int> count = new List<int>();
 
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
@@ -642,31 +642,31 @@ namespace Database_Project
             }
 
 
-			List<KeyValuePair<string, int>> myData = new List<KeyValuePair<string, int>>();
-			for (int i = 0; i < 7; i++)
+            List<KeyValuePair<string, int>> myData = new List<KeyValuePair<string, int>>();
+            for (int i = 0; i < 7; i++)
             {
-				if (dayData.Contains(i))
+                if (dayData.Contains(i))
                 {
-					int c = count[dayData.IndexOf(i)];
-					myData.Add(new KeyValuePair<string, int>(days[i], c));
-				}
+                    int c = count[dayData.IndexOf(i)];
+                    myData.Add(new KeyValuePair<string, int>(days[i], c));
+                }
                 else
                 {
                     myData.Add(new KeyValuePair<string, int>(days[i], 0));
                 }
-			}
-			ShowCheckinsWindow w2 = new ShowCheckinsWindow();
-			w2.checkinChart.DataContext = myData;
-			w2.Show();
-		}
+            }
+            ShowCheckinsWindow w2 = new ShowCheckinsWindow();
+            w2.checkinChart.DataContext = myData;
+            w2.Show();
+        }
 
-		private void numBusinessPerCategoryButton_Click(object sender, RoutedEventArgs e)
+        private void numBusinessPerCategoryButton_Click(object sender, RoutedEventArgs e)
         {
-			Dictionary<string, int> myData = new Dictionary<string, int>();
-			
-			for (int i = 0; i < searchResultsDataGrid.Items.Count; i++)
+            Dictionary<string, int> myData = new Dictionary<string, int>();
+            
+            for (int i = 0; i < searchResultsDataGrid.Items.Count; i++)
             {
-				Business b = (Business)searchResultsDataGrid.Items[i];
+                Business b = (Business)searchResultsDataGrid.Items[i];
 
                 using (var connection = new NpgsqlConnection(buildConnString()))
                 {
@@ -691,22 +691,22 @@ namespace Database_Project
                         }
                     }
                 }
-			}
-			CategoriesChart w2 = new CategoriesChart();
-			w2.categoryChart.DataContext = myData;
-			w2.Show();
-		}
+            }
+            CategoriesChart w2 = new CategoriesChart();
+            w2.categoryChart.DataContext = myData;
+            w2.Show();
+        }
 
-		private void avgStarsPerCategoryButton_Click(object sender, RoutedEventArgs e)
+        private void avgStarsPerCategoryButton_Click(object sender, RoutedEventArgs e)
         {
-			Dictionary<string, int> categoryCount = new Dictionary<string, int>();
-			Dictionary<string, int> categoryStarSum = new Dictionary<string, int>();
-			List<string> cat = new List<string>();
+            Dictionary<string, int> categoryCount = new Dictionary<string, int>();
+            Dictionary<string, int> categoryStarSum = new Dictionary<string, int>();
+            List<string> cat = new List<string>();
 
-			for (int i = 0; i < searchResultsDataGrid.Items.Count; i++)
+            for (int i = 0; i < searchResultsDataGrid.Items.Count; i++)
             {
-				Business b = (Business)searchResultsDataGrid.Items[i];
-				cat.Clear();
+                Business b = (Business)searchResultsDataGrid.Items[i];
+                cat.Clear();
 
                 using (var connection = new NpgsqlConnection(buildConnString()))
                 {
@@ -739,21 +739,21 @@ namespace Database_Project
                         }
                     }
                 }
-			}	
+            }    
 
-			CategoriesChart w2 = new CategoriesChart();
-			foreach (KeyValuePair<string, int> kvp in categoryStarSum)
+            CategoriesChart w2 = new CategoriesChart();
+            foreach (KeyValuePair<string, int> kvp in categoryStarSum)
             {
-				categoryStarSum[kvp.Key] = kvp.Value / categoryCount[kvp.Key];
-			}
-			w2.categoryChart.DataContext = categoryStarSum;
-			w2.Show();
-		}
+                categoryStarSum[kvp.Key] = kvp.Value / categoryCount[kvp.Key];
+            }
+            w2.categoryChart.DataContext = categoryStarSum;
+            w2.Show();
+        }
 
-		private void showTipsButton_Click(object sender, RoutedEventArgs e)
+        private void showTipsButton_Click(object sender, RoutedEventArgs e)
         {
-			TipsTable w2 = new TipsTable();
-			Business b = (Business)searchResultsDataGrid.SelectedItem;
+            TipsTable w2 = new TipsTable();
+            Business b = (Business)searchResultsDataGrid.SelectedItem;
             using (var connection = new NpgsqlConnection(buildConnString()))
             {
                 connection.Open();
@@ -771,8 +771,8 @@ namespace Database_Project
                     }
                 }
             }
-			w2.Show();
-		}
+            w2.Show();
+        }
         #endregion Second Tab
 
     }
